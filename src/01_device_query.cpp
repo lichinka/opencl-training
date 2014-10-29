@@ -153,6 +153,16 @@ void print_devices(cl_platform_id pid) {
             exit(EXIT_FAILURE);
         }
         std::cout << "  Local memory: " << m << " bytes" << std::endl;
+        // max allocation size
+        m = 0;
+        status = clGetDeviceInfo(*i, CL_DEVICE_MAX_MEM_ALLOC_SIZE,
+                                 sizeof(cl_ulong), &m, 0);
+        if(status != CL_SUCCESS) {
+            std::cerr << "ERROR - clGetDeviceInfo(CL_DEVICE_MAX_MEM_ALLOC_SIZE)"
+                      << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        std::cout << "  Maximum size of allocatable object: " << m << " bytes" << std::endl;
     }
 }
 

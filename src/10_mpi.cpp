@@ -73,6 +73,18 @@ int main(int argc, char** argv) {
         }
    
         platforms[platformID].getDevices(deviceType, &devices);
+        if (devices.size ( ) < 1)
+        {
+            std::cerr << "No devices found" << std::endl;
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            std::string dev_name;
+            devices[0].getInfo (CL_DEVICE_NAME, &dev_name);
+            std::cout << "# Found device [" << dev_name << "]" << std::endl; 
+        }
+
         cl::Context context(devices);
         cl::CommandQueue queue(context, devices[deviceID],
                                CL_QUEUE_PROFILING_ENABLE);
@@ -135,6 +147,12 @@ int main(int argc, char** argv) {
         queue.finish();
 
         //2) copy data to from remote process
+
+        //
+        // initialize the timer
+        //
+        double t_start = MPI_Wtime ( );
+
         const int tag0to1 = 0x01;
         const int tag1to0 = 0x10;
         MPI_Request send_req;
@@ -167,6 +185,18 @@ int main(int argc, char** argv) {
         queue.enqueueUnmapMemObject(devRecvData, recvHostPtr);
         MPI_Wait(&send_req, &status);
         queue.enqueueUnmapMemObject(devData, sendHostPtr);
+
+        //
+        // time spent for the GPU-to-GPU transfer
+        //
+        double t_end   = MPI_Wtime ( );
+        double t_spent = t_end - t_start;
+
+        if (task == 0)
+        {
+            std::cout << "# GPU-to-GPU transfer took " << t_spent/1e6;
+            std::cout << " seconds" << std::endl;
+        }
 
         //note that instead of having each process compile the code
         //you could e.g. send the size and content of the source buffer

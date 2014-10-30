@@ -1,15 +1,30 @@
 #!/bin/sh
 
 # 
-# On Daint, compile with this module setup:
+# - On Daint, compile with this module setup:
 #
 # module switch PrgEnv-cray PrgEnv-gnu
 # module load craype-accel-nvidia35
+# 
+# - On Opcode, compile with this module setup:
+#
+# module load mvapich2/2.0-gcc-opcode2-4.7.2
 #
 SRC=../src
 CLSRC=../src/kernels
-CLSDK=/opt/nvidia/cudatoolkit
-CLLIB=/opt/cray/nvidia/default
+
+case $( hostname ) in 
+    *daint*)
+        echo "Building on daint ..."
+        CLSDK=/opt/nvidia/cudatoolkit
+        CLLIB=/opt/cray/nvidia/default
+        ;;
+    *opcode*)
+        echo "Building on opcode ..."
+        CLSDK=/apps/opcode/CUDA-5.5
+        CLLIB=/apps/opcode/CUDA-5.5
+        ;;
+esac
 
 g++ $SRC/01_device_query.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 01_device_query
 g++ $SRC/02_create_context.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 02_create_context
@@ -21,5 +36,7 @@ g++ $SRC/07_convolution.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOp
 g++ -DWRITE_TO_IMAGE $SRC/07_convolution.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 07_convolution_image_write
 g++ $SRC/08_cpp.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 08_cpp
 g++ $SRC/09_memcpy.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 09_memcpy
+mpicc $SRC/10_mpi.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 10_mpi
 g++ $SRC/cl-compiler.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o clcc
-gcc -DPINNED $SRC/osu_bwidth.c -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o osu_bwidth
+mpicc -DPINNED $SRC/osu_bwidth.c -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o osu_bwidth
+

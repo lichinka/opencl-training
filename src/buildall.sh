@@ -1,8 +1,16 @@
 #!/bin/sh
+
+# 
+# On Daint, compile with this module setup:
+#
+# module switch PrgEnv-cray PrgEnv-gnu
+# module load craype-accel-nvidia35
+#
 SRC=../src
 CLSRC=../src/kernels
-CLSDK=/opt/nvidia/cudatoolkit/5.0.35.102
+CLSDK=/opt/nvidia/cudatoolkit
 CLLIB=/opt/cray/nvidia/default
+
 g++ $SRC/01_device_query.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 01_device_query
 g++ $SRC/02_create_context.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 02_create_context
 g++ $SRC/03_kernel_load_and_exec.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 03_kernel_load_and_exec
@@ -14,3 +22,4 @@ g++ -DWRITE_TO_IMAGE $SRC/07_convolution.cpp $SRC/clutil.cpp -I$CLSDK/include -L
 g++ $SRC/08_cpp.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 08_cpp
 g++ $SRC/09_memcpy.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 09_memcpy
 g++ $SRC/cl-compiler.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o clcc
+gcc -DPINNED $SRC/osu_bwidth.c -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o osu_bwidth

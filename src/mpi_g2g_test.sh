@@ -20,7 +20,7 @@ case $( hostname ) in
         EXEC="aprun -n ${NPROC} -N 1"
         ;;
     *opcode*)
-        export CUDA_VISIBLE_DEVICES="0,1"
+        export CUDA_VISIBLE_DEVICES="0,4"
         EXEC="mpiexec.hydra -n ${NPROC}"
         ;;
 esac
@@ -37,6 +37,18 @@ esac
 #
 # bandwidth test
 #
+export MV2_USE_CUDA=1
+for streams in $( seq 0 1 ); do
+    for ipc in $( seq 0 1 ); do
+        for smp in $( seq 0 1 ); do
+            export MV2_CUDA_NONBLOCKING_STREAMS=${streams}
+            export MV2_CUDA_IPC=${ipc}
+            export MV2_CUDA_SMP_IPC=${smp}
+            env | grep MV2
+            ${EXEC} ./osu_bwidth
+            echo "##########"
+        done
+    done
+done
 
-${EXEC} ./osu_bwidth
 

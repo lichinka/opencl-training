@@ -50,7 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* CLErrorString from SHOC suite http://ft.ornl.gov/doku/shoc/start */
 
-inline const char *CLErrorString(cl_int err)
+static inline const char *CLErrorString(cl_int err)
 {
     switch (err)
     {

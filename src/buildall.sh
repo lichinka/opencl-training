@@ -15,8 +15,11 @@ CLSRC=../src/kernels
 
 case $( hostname ) in 
     *daint*)
-        CC=cc
-        CXX=CC
+        #CC="cc -g -O0"
+        #CXX="CC -g O0"
+        MPI_HOME="/opt/cray/mpt/7.0.4/gni/mpich2-gnu/48/"
+        CC="clang -g -O0 -I${MPI_HOME}/include -L${MPI_HOME}/lib -lmpich"
+        CXX="clang++ -g -O0 -I${MPI_HOME}/include -L${MPI_HOME}/lib -lmpich"
         CLSDK=/opt/nvidia/cudatoolkit
         CLLIB=/opt/cray/nvidia/default
         ;;

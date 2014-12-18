@@ -1,0 +1,55 @@
+CC  = cc # or clang
+CXX = CC # or clang++
+
+H := $(shell echo $(HOST) | tr [a-z] [A-Z] | tr -d [0-9] )
+
+
+ifeq ($H,DAINT)
+#ifeq ($(PE_ENV),INTEL)
+# -----------------------------------
+ifneq ($(PE_ENV),GNU)
+$(error '---- YOU MUST module switch PrgEnv-cray PrgEnv-gnu ----')
+endif
+# -----------------------------------
+ifneq ($(CRAY_ACCEL_TARGET),nvidia35)
+$(error '---- YOU MUST module load craype-accel-nvidia35 ----')
+endif
+# -----------------------------------
+CLSDK=/opt/nvidia/cudatoolkit
+CLLIB=/opt/cray/nvidia/default
+MPI_HOME=$(CRAY_MPICH2_DIR)
+CFLAGS	= 
+CXXFLAGS += -I$(MPI_HOME)/include
+CXXFLAGS += -I$(CLSDK)/include 
+CXXFLAGS += -g -O0 -w
+LDFLAGS = $(CXXFLAGS) \
+-L$(CLLIB)/lib64 -lOpenCL \
+-L${MPI_HOME}/lib -lmpich
+# -----------------------------------
+else 
+$(error '---- system not supported by this Makefile yet ----')
+endif
+
+OBJ     = 10_mpi.o
+.SUFFIXES: .o .c .cpp
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< 
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
+$(H).$(PE_ENV): $(OBJ)
+	$(CXX) $(LDFLAGS) $(OBJ) -o $@ $(DDTFLAG) $(DDTLINK)
+	@echo $(H) / $(PE_ENV) / executable ready
+
+clean:
+	rm -f *.o *.mod
+
+
+# aprun -n2 -N1 ./DAINT.GNU.clang 0 gpu 0 1024
+# Found device [Tesla K20X]
+# # Found device [Tesla K20X]
+# # GPU-to-GPU transfer took 2.59686e-09 seconds
+# [0]: PASSED
+# [1]: PASSED

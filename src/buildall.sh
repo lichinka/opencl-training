@@ -35,6 +35,12 @@ case $( hostname ) in
         CLSDK=/apps/opcode/CUDA-5.5
         CLLIB=/apps/opcode/CUDA-5.5
         ;;
+    *dom*)
+        CC=mpicc
+        CXX=mpicxx
+        CLSDK=/usr/local/cuda-6.0
+        CLLIB=${CLSDK}
+        ;;
     *)
         echo "Unknown system: ${HOSTNAME}"
         exit 1

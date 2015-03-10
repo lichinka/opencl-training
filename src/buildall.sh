@@ -31,9 +31,10 @@ case $( hostname ) in
         ;;
     *opcode*)
         CC=mpicc
-        CXX=g++
+        CXX=mpicxx
         CLSDK=/apps/opcode/CUDA-5.5
         CLLIB=/apps/opcode/CUDA-5.5
+        MPIHOME=/apps/opcode/mvapich2/2.0/gcc/opcode2/4.7.2
         ;;
     *dom*)
         CC=mpicc
@@ -58,7 +59,7 @@ $CXX $SRC/07_convolution.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lO
 $CXX -DWRITE_TO_IMAGE $SRC/07_convolution.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 07_convolution_image_write
 $CXX $SRC/08_cpp.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 08_cpp
 $CXX $SRC/09_memcpy.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 09_memcpy
-$CXX $SRC/10_mpi.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o 10_mpi
+$CXX $SRC/10_mpi.cpp -I$MPIHOME/include -I$CLSDK/include -L$MPIHOME/lib -L$CLLIB/lib64 -lmpich -lOpenCL -o 10_mpi
 $CXX $SRC/cl-compiler.cpp $SRC/clutil.cpp -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o clcc
 $CC  -DPINNED $SRC/osu_bwidth.c -I$CLSDK/include -L$CLLIB/lib64 -lOpenCL -o osu_bwidth
 

@@ -1,0 +1,19 @@
+CC        = cc
+CXX       = CC
+NVCC      = nvcc
+FORT      = gfortran
+
+ARCH      = ar
+ARCHFLAGS = cr
+RANLIB    = ranlib
+
+OPTS      = -O3 -g
+NVOPTS    = --compiler-options -fno-strict-aliasing -arch sm_20 -DUNIX -O2
+LDOPTS    =  
+
+LIBS      = -lstdc++ -lOpenCL
+
+CUDADIR   = $(CUDATOOLKIT_HOME)
+MPIDIR    = /opt/cray/mpt/7.0.4/gni/mpich2-gnu/48/
+LIBDIR    = -L$(CUDADIR)/lib64/ -L$(MPIDIR)/lib/
+INC       = -I$(CUDADIR)/include -I$(MPIDIR)/include/

@@ -1,5 +1,5 @@
 #!/bin/bash
-PLATFORM=$1
+PLATFORM="NVIDIA CUDA"
 DIR=.
 RUN=aprun
 CLSRC=../src/kernels
@@ -31,3 +31,8 @@ $RUN $DIR/08_cpp 0 default $CLSRC/08_arrayset.cl arrayset
 echo $'\n=== 09_memcpy - if it fails try without page-locked switch'
 _128MB=134217728
 $RUN $DIR/09_memcpy 0 default 0 $_128MB page-locked 
+
+echo "#"
+echo "# Starting MPI tests"
+echo "#"
+./mpi_g2g_test.sh

@@ -16,23 +16,27 @@
 NPROC=2
 
 case $( hostname ) in
-    *daint*)
+    *daint* | *santis*)
         EXEC="aprun -n ${NPROC} -N 1"
         ;;
     *opcode*)
         export CUDA_VISIBLE_DEVICES="0,4"
         EXEC="mpiexec.hydra -n ${NPROC}"
         ;;
+    *)
+        echo "Don't know to compile here. Exiting."
+        exit 1
+        ;;
 esac
 
 #
 # timed-transfer tests
 #
-#for i in $( seq 13 15 ); do
-#    NUM="$( echo "2^${i}" | bc -l )"
-#    echo "# Transfering ${NUM} doubles ..."
-#    ${EXEC} ./10_mpi 0 gpu 0 ${NUM}
-#done
+for i in $( seq 10 15 ); do
+    NUM="$( echo "2^${i}" | bc -l )"
+    echo "# Transfering ${NUM} doubles ..."
+    ${EXEC} ./10_mpi 0 gpu 0 ${NUM}
+done
 
 #
 # bandwidth test

@@ -1,0 +1,14 @@
+*.swp
+01_device_query
+02_create_context
+03_kernel_load_and_exec
+04_matrix_multiply
+05_dot_product
+06_matrix_multiply_timing
+07_convolution
+07_convolution_image_write
+08_cpp
+09_memcpy
+10_mpi
+clcc
+osu_bwidth
